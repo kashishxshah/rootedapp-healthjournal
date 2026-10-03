@@ -94,6 +94,24 @@ function RootedApp() {
     setStorageWarning(!persistData(next));
     if (message) setFeedback(message);
   }, []);
+  
+  function patchExperiment(
+  id: string,
+  update: (experiment: Experiment) => Experiment,
+  message: string
+) {
+  if (!data) return;
+
+  updateData(
+    {
+      ...data,
+      experiments: data.experiments.map((experiment) =>
+        experiment.id === id ? update(experiment) : experiment
+      ),
+    },
+    message
+  );
+}
 
   function begin(mode: "demo" | "fresh") {
     const starting: RootedData = mode === "demo"
