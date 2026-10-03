@@ -137,13 +137,32 @@ function RootedApp() {
     setCheckedIn(true);
   }
 
-  function addExperiment(pattern: Pattern, duration = 7) {
-    if (!data) return;
-    const newExperiment = makeExperiment(pattern, duration, day, today);
-    updateData({ ...data, experiments: [newExperiment, ...data.experiments] }, "Your experiment has begun. You can note an observation each day.");
-    setActiveTab("experiments");
-    setSelectedPattern(null);
-  }
+function addExperiment(pattern: Pattern, duration = 7) {
+  if (!data) return;
+
+  const currentDay =
+    data.logs.length > 0
+      ? Math.max(...data.logs.map((log) => log.dayNumber))
+      : 1;
+
+  const newExperiment = makeExperiment(
+    pattern,
+    duration,
+    currentDay,
+    today
+  );
+
+  updateData(
+    {
+      ...data,
+      experiments: [newExperiment, ...data.experiments],
+    },
+    "Your experiment has begun. You can note an observation each day."
+  );
+
+  setActiveTab("experiments");
+  setSelectedPattern(null);
+}
 
   function patchExperiment(id: string, update: (experiment: Experiment) => Experiment, message: string) {
     if (!data) return;
