@@ -140,10 +140,7 @@ function RootedApp() {
 function addExperiment(pattern: Pattern, duration = 7) {
   if (!data) return;
 
-  const currentDay =
-    data.logs.length > 0
-      ? Math.max(...data.logs.map((log) => log.dayNumber))
-      : 1;
+  const currentDay = currentDay(data, today);
 
   const newExperiment = makeExperiment(
     pattern,
@@ -153,10 +150,7 @@ function addExperiment(pattern: Pattern, duration = 7) {
   );
 
   updateData(
-    {
-      ...data,
-      experiments: [newExperiment, ...data.experiments],
-    },
+    { ...data, experiments: [newExperiment, ...data.experiments] },
     "Your experiment has begun. You can note an observation each day."
   );
 
