@@ -140,12 +140,12 @@ function RootedApp() {
 function addExperiment(pattern: Pattern, duration = 7) {
   if (!data) return;
 
-  const currentDay = currentDay(data, today);
+  const experimentStartDay = currentDay(data, today);
 
   const newExperiment = makeExperiment(
     pattern,
     duration,
-    currentDay,
+    experimentStartDay,
     today
   );
 
@@ -157,11 +157,6 @@ function addExperiment(pattern: Pattern, duration = 7) {
   setActiveTab("experiments");
   setSelectedPattern(null);
 }
-
-  function patchExperiment(id: string, update: (experiment: Experiment) => Experiment, message: string) {
-    if (!data) return;
-    updateData({ ...data, experiments: data.experiments.map((experiment) => experiment.id === id ? update(experiment) : experiment) }, message);
-  }
 
 function saveExperimentNote(experiment: Experiment, note: string) {
   const trimmed = note.trim();
