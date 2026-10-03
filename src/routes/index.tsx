@@ -169,12 +169,33 @@ function addExperiment(pattern: Pattern, duration = 7) {
     updateData({ ...data, experiments: data.experiments.map((experiment) => experiment.id === id ? update(experiment) : experiment) }, message);
   }
 
-  function saveExperimentNote(experiment: Experiment, note: string) {
-    const trimmed = note.trim();
-    if (!trimmed || !data) return;
-    const entry = { dayNumber: day, date: today, note: trimmed, comfort: todayLog?.scalpComfort ?? null };
-    patchExperiment(experiment.id, (item) => ({ ...item, dailyNotes: [...item.dailyNotes.filter((existing) => existing.dayNumber !== day), entry] }), "Your experiment note is saved.");
-  }
+function saveExperimentNote(experiment: Experiment, note: string) {
+  const trimmed = note.trim();
+  if (!trimmed || !data) return;
+
+  const currentDay = currentDay(data, today);
+
+  const entry = {
+    dayNumber: currentDay,
+    date: today,
+    note: trimmed,
+    comfort: todayLog?.scalpComfort ?? null,
+  };
+
+  patchExperiment(
+    experiment.id,
+    (item) => ({
+      ...item,
+      dailyNotes: [
+        ...item.dailyNotes.filter(
+          (existing) => existing.dayNumber !== currentDay
+        ),
+        entry,
+      ],
+    }),
+    "Your experiment note is saved."
+  );
+}
 
   function downloadSummary() {
     if (!data) return;
