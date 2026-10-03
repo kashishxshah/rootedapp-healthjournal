@@ -202,7 +202,16 @@ export function journeyStats(data: RootedData) {
   const patterns = discoverPatterns(data);
   const regularity = data.logs.filter((log) => log.factors.includes("hard-water") || log.factors.includes("oiling")).map((log) => log.dayNumber);
   const intervals = regularity.slice(1).map((day, index) => day - (regularity[index] ?? day));
-  const mostCommonInterval = intervals.length ? Math.max(...new Set(intervals.map((value) => [value, intervals.filter((item) => item === value).length] as const)).map((item) => item[1])) : null;
+  const mostCommonInterval = intervals.length
+  ? Math.max(
+      ...Array.from(
+        intervals.reduce((counts, interval) => {
+          counts.set(interval, (counts.get(interval) ?? 0) + 1);
+          return counts;
+        }, new Map<number, number>()).values()
+      )
+    )
+  : null;
   const routines = new Map<string, number>();
   for (const log of data.logs) for (const routine of log.routines) routines.set(routine, (routines.get(routine) ?? 0) + 1);
   for (const log of data.logs) for (const factorId of log.factors) {
